@@ -72,9 +72,6 @@ void durian::initialize_paths(void) {
 }
 
 void durian::initialize_system(void) {
-    FolderUtilities::SetHomeFolder(cntnr_d.durian_path.string());
-    FolderUtilities::SetFolderOverrides({}, {}, {}, cntnr_d.system_data_path);
-    
     auto mm{std::make_unique<iOSMessageManager>()};
     MessageManager::SetOptions(false, true);
     MessageManager::RegisterMessageManager(mm.get());
@@ -100,6 +97,9 @@ void durian::destroy_system(void) {
 
 
 void durian::insert_disc(std::string path) {
+    FolderUtilities::SetHomeFolder(cntnr_d.durian_path.string());
+    FolderUtilities::SetFolderOverrides({}, {}, {}, cntnr_d.system_data_path);
+    
     cntnr_d.emulator->LoadRom({path}, {});
     cntnr_d.emulator->RegisterInputProvider(cntnr_d.input.get());
 }

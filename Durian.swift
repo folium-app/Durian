@@ -183,6 +183,18 @@ public actor DurianSystem {
     }
     
     
+    public func setSetting<T>(setting: durian.SETTING, value: T) {
+        switch value {
+        case let boolSetting as Bool:
+            durian.set_setting(setting, boolSetting)
+        case let intSetting as Int:
+            durian.set_setting(setting, Int32(intSetting))
+        default:
+            break
+        }
+    }
+    
+    
     public nonisolated func boxartURLString(for url: URL) -> String? {
         let title: String = url.deletingPathExtension().lastPathComponent
 

@@ -36,4 +36,14 @@ void press_button(uint32_t), release_button(uint32_t);
 
 void* context;
 void set_context(void* context);
+
+enum class SETTING {
+    ADJUST_COLOURS = 0,
+    BLEND_FRAMES = 1,
+    CONSOLE_MODEL = 2,
+    SHOW_ICONS = 3
+};
+
+void set_setting(SETTING, bool);
+void set_setting(SETTING, int);
 }

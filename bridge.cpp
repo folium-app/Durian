@@ -35,6 +35,8 @@ struct cntnr_d {
     std::unique_ptr<iOSRenderer> renderer;
     std::unique_ptr<iOSSink> sink;
     
+    WsConfig config;
+    
     std::condition_variable_any cv;
     std::mutex mutex;
     std::atomic<bool> paused, running;
@@ -84,13 +86,11 @@ void durian::initialize_system(void) {
     cntnr_d.renderer = std::make_unique<iOSRenderer>(cntnr_d.emulator, 144, 224);
     cntnr_d.sink = std::make_unique<iOSSink>(cntnr_d.emulator, 48000);
     
-    WsConfig ws = cntnr_d.emulator->GetSettings()->GetWsConfig();
-    ws.AudioMode = WsAudioMode::Speakers;
-    for (auto channel : {&ws.Channel1Vol, &ws.Channel2Vol, &ws.Channel3Vol, &ws.Channel4Vol, &ws.Channel5Vol})
-        *channel = 100;
-    ws.ControllerHorizontal.Type = ControllerType::WsController;
-    ws.ControllerVertical.Type = ControllerType::WsControllerVertical;
-    cntnr_d.emulator->GetSettings()->SetWsConfig(ws);
+    cntnr_d.config = cntnr_d.emulator->GetSettings()->GetWsConfig();
+    cntnr_d.config.AudioMode = WsAudioMode::Speakers;
+    cntnr_d.config.ControllerHorizontal.Type = ControllerType::WsController;
+    cntnr_d.config.ControllerVertical.Type = ControllerType::WsControllerVertical;
+    cntnr_d.emulator->GetSettings()->SetWsConfig(cntnr_d.config);
 }
 
 
@@ -198,4 +198,39 @@ void durian::release_button(uint32_t button) {
 
 void durian::set_context(void* context) {
     durian::context = context;
+}
+
+void durian::set_setting(SETTING setting, bool value) {
+    cntnr_d.config = cntnr_d.emulator->GetSettings()->GetWsConfig();
+    
+    switch (setting) {
+        case SETTING::ADJUST_COLOURS:
+            cntnr_d.config.LcdAdjustColors = value;
+            break;
+        case SETTING::BLEND_FRAMES:
+            cntnr_d.config.BlendFrames = value;
+            break;
+        case SETTING::SHOW_ICONS:
+            cntnr_d.config.LcdShowIcons = value;
+            break;
+        default:
+            break;
+    }
+    
+    cntnr_d.emulator->GetSettings()->SetWsConfig(cntnr_d.config);
+}
+
+
+void durian::set_setting(SETTING setting, int value) {
+    cntnr_d.config = cntnr_d.emulator->GetSettings()->GetWsConfig();
+    
+    switch (setting) {
+        case SETTING::CONSOLE_MODEL:
+            cntnr_d.config.Model = static_cast<WsModel>(value);
+            break;
+        default:
+            break;
+    }
+    
+    cntnr_d.emulator->GetSettings()->SetWsConfig(cntnr_d.config);
 }

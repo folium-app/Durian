@@ -10,6 +10,7 @@
 
 #include "Shared/EmuSettings.h"
 #include "Shared/MessageManager.h"
+#include "Shared/SaveStateManager.h"
 #include "Utilities/FolderUtilities.h"
 
 #include <atomic>
@@ -233,4 +234,29 @@ void durian::set_setting(SETTING setting, int value) {
     }
     
     cntnr_d.emulator->GetSettings()->SetWsConfig(cntnr_d.config);
+}
+
+
+
+bool durian::save_state_exists(int index) {
+    if (const auto& save_state_manager = cntnr_d.emulator->GetSaveStateManager()) {
+        const auto& path{save_state_manager->GetSaveStatePath(index)};
+        return std::filesystem::exists(path) && std::filesystem::file_size(path) > 0;
+    } return false;
+}
+
+std::string durian::save_state_path(int index) {
+    if (const auto& save_state_manager = cntnr_d.emulator->GetSaveStateManager()) {
+        return save_state_manager->GetSaveStatePath(index);
+    } return {};
+}
+
+void durian::load_state(int index) {
+    if (const auto& save_state_manager = cntnr_d.emulator->GetSaveStateManager())
+        save_state_manager->LoadState(index);
+}
+
+void durian::save_state(int index) {
+    if (const auto& save_state_manager = cntnr_d.emulator->GetSaveStateManager())
+        save_state_manager->SaveState(index);
 }

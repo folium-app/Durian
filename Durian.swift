@@ -205,4 +205,21 @@ public actor DurianSystem {
             "\(endpoint)/Bandai - WonderSwan/Named_Boxarts/\(title).png"
         }
     }
+    
+    
+    public nonisolated func saveStatePath(for index: Int) -> String {
+        String(durian.save_state_path(Int32(index)))
+    }
+    
+    public func saveStateExists(for index: Int) -> Bool {
+        durian.save_state_exists(Int32(index))
+    }
+    
+    public func saveStateLoad(for index: Int) {
+        durian.load_state(Int32(index))
+    }
+    
+    public func saveStateSave(for index: Int) {
+        durian.save_state(Int32(index))
+    }
 }
